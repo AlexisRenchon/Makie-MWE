@@ -69,4 +69,44 @@ on(events(fig).keyboardbutton) do event
   end
 end
 
+function distance(Food, Snake)
+  sqrt((Food[][1] - Snake[][1] + Food[][2] - Snake[][2])^2)
+end
+
+Score = 0
+function eat(timer)
+  if distance(Food, Snake) < 1
+    Food[] = Point2f([rand()*10, rand()*10])
+    global Speed /= 1.2
+    global Score += 1
+  end
+end
+t2 = Timer(eat, 0, interval = Speed)
+
+# to do: add score, top right corner
+# to do: add tail
+
+# tail: copy of where Snake was (score) second ago
+Tail = Observable(Point2f([0.0, 0.0]))
+xT = Tail[][1]
+yT = Tail[][2]
+pTail = scatter!(Tail; 
+	     markersize = 40,
+	     color = :green,
+	     marker = :rect,
+	     visible = false
+	     )
+
+function tail(timer)
+  if Score > 0
+    xT = Snake[][1]
+    yT = Snake[][2]
+    Tail[] = Point2f([xT, yT])
+    pTail.visible = true
+  end
+end
+t3 = Timer(tail, 2, interval = Speed)
+
+# to do: on closing Makie window, close(t), close(t2), close(t3)
+
 
